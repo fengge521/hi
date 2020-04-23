@@ -111,6 +111,7 @@ export default {
 
         // 关闭 loading
         this.loginLoading = false
+        window.localStorage.setItem('user', JSON.stringify(res.data.data))
         this.$router.push({
           name: 'home'
         })
