@@ -4,6 +4,7 @@ import Login from '@/views/login/'
 import Home from '@/views/home/'
 import Layout from '@/views/layout/'
 import Article from '@/views/article/'
+import Publish from '@/views/publish'
 Vue.use(VueRouter)
 
 const routes = [
@@ -26,6 +27,11 @@ const routes = [
         // 参考：https://gitee.com/lipengzhou/toutiao-publish-admin/issues/I1F1BA
         name: 'home',
         component: Home
+      },
+      {
+        path: '/publish',
+        name: 'publish',
+        component: Publish
       },
       {
         path: '/article',
