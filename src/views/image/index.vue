@@ -102,6 +102,7 @@ export default {
 
   },
   methods: {
+    // 进入页面,加载图片
     loadImages (collect) {
       getImage({
         collect,
@@ -113,6 +114,7 @@ export default {
         this.totalCount = totalCount
       })
     },
+    // 当全部收藏切换时触发该函数
     onCollectChange (value) {
       // debugger
       this.loadImages(value)
@@ -121,6 +123,7 @@ export default {
       this.dialogUploadVisible = false
       this.loadImages(false)
     },
+    // 切换分页时触发
     onCurrentChange (page) {
       this.page = page
       this.loadImages(false)

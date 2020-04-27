@@ -102,11 +102,6 @@
           <!-- 如果需要在自定义列模板中获取当前遍历项数据，那么就在 template 上声明 slot-scope="scope" -->
           <template slot-scope="scope">
             <el-tag :type="articleStatus[scope.row.status].type">{{ articleStatus[scope.row.status].text }}</el-tag>
-            <!-- <el-tag v-if="scope.row.status === 0" type="warning">草稿</el-tag>
-            <el-tag v-else-if="scope.row.status === 1">待审核</el-tag>
-            <el-tag v-else-if="scope.row.status === 2" type="success">审核通过</el-tag>
-            <el-tag v-else-if="scope.row.status === 3" type="danger">审核失败</el-tag>
-            <el-tag v-else-if="scope.row.status === 4" type="info">已删除</el-tag> -->
           </template>
         </el-table-column>
         <el-table-column
@@ -196,6 +191,7 @@ export default {
   },
   mounted () {},
   methods: {
+    // 进入页面获取文章
     loadArticles (page) {
       this.loading = true
       getArticles({
@@ -212,7 +208,7 @@ export default {
         this.loading = false
       })
     },
-
+    // 页码改变时重新加载该页码的文章
     onCurrentChange (page) {
       this.loadArticles(page)
     },
@@ -222,16 +218,20 @@ export default {
         this.channels = res.data.data.channels
       })
     },
+    // 根据id删除文章
     deleteArticle (articleId) {
       this.$confirm('确认删除吗？', '删除提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // 点击确定 根据id删除文章
         deleteArticles(articleId.toString()).then(res => {
+          // 删除成功 根据页码渲染页面
           this.loadArticles(this.page)
         })
       }).catch(() => {
+        // 点击取消提示取消
         this.$message({
           type: 'info',
           message: '已取消删除'
