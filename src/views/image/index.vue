@@ -125,6 +125,7 @@ export default {
       this.page = page
       this.loadImages(false)
     },
+    // 添加收藏
     addImages (imageId) {
       // console.log(imageId)
       this.$confirm('确认收藏吗？', '收藏提示', {
@@ -153,6 +154,7 @@ export default {
         })
       })
     },
+    // 删除图片
     delImages (imageId) {
       this.$confirm('确认删除吗？', '删除提示', {
         confirmButtonText: '确定',
@@ -160,7 +162,7 @@ export default {
         type: 'warning'
       }).then(() => {
         delImage(imageId).then(res => {
-          this.loadImages(this.page, false)
+          this.loadImages(false)
           // this.collect = false
           this.$message({
             type: 'success',
