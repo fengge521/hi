@@ -5,6 +5,7 @@ import Home from '@/views/home/'
 import Layout from '@/views/layout/'
 import Article from '@/views/article/'
 import Publish from '@/views/publish'
+import Image from '@/views/image'
 Vue.use(VueRouter)
 
 const routes = [
@@ -15,14 +16,10 @@ const routes = [
   },
   {
     path: '/',
-    // 命名路由 layout 有一个默认子路由，这个名字没有意义，所以警告
-    // 正确的做法是：如果有默认子路由，就不要给父路由起名字了
-    // name: 'layout',
     component: Layout,
     children: [
       {
         path: '', // path 为空，会作为默认子路由渲染
-
         // 路由的名字是干啥的？
         // 参考：https://gitee.com/lipengzhou/toutiao-publish-admin/issues/I1F1BA
         name: 'home',
@@ -37,6 +34,11 @@ const routes = [
         path: '/article',
         name: 'article',
         component: Article
+      },
+      {
+        path: '/image',
+        name: 'image',
+        component: Image
       }
     ]
   }
