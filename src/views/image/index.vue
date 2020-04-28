@@ -10,7 +10,7 @@
         <!-- /面包屑路径导航 -->
       </div>
       <div class="action-head">
-        <el-radio-group v-model="collect" size="mini">
+        <el-radio-group v-model="collect" size="mini" @change="loadImages(1)">
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
