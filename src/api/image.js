@@ -25,11 +25,13 @@ export const getImage = params => {
 /**
  * 收藏图片
  */
-export const addImage = (data, imageId) => {
+export const addImage = (imageId, collect) => {
   return request({
     method: 'PUT',
     url: `/mp/v1_0/user/images/${imageId}`,
-    data
+    data: {
+      collect
+    }
   })
 }
 

@@ -10,7 +10,7 @@
         <!-- /面包屑路径导航 -->
       </div>
       <div class="action-head">
-        <el-radio-group v-model="collect" size="mini" @change="onCollectChange">
+        <el-radio-group v-model="collect" size="mini">
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
@@ -37,8 +37,22 @@
               fit="cover"
             ></el-image>
             <div class="image-shadow">
-              <i class="el-icon-star-off" @click="addImages(img.id)"></i>
-              <i class="el-icon-delete" @click="delImages(img.id)"></i>
+              <el-button
+                type="warning"
+                :icon="img.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"
+                circle
+                size="small"
+                @click="addImages(img)"
+                :loading="img.loading"
+              ></el-button>
+              <el-button
+                size="small"
+                type="danger"
+                icon="el-icon-delete-solid"
+                circle
+                :loading="img.loading"
+                @click="delImages(img)"
+              ></el-button>
             </div>
           </div>
         </el-col>
@@ -59,7 +73,7 @@
       :visible.sync="dialogUploadVisible"
       :append-to-body="true"
     >
-    <el-upload
+     <el-upload
         class="upload-demo"
         drag
         action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
@@ -91,82 +105,75 @@ export default {
         Authorization: `Bearer ${user.token}`
       },
       totalCount: 0, // 总数据条数
-      pageSize: 20,
+      pageSize: 10,
       page: 1
     }
   },
   created () {
-    this.loadImages(false)
+    this.loadImages(1)
   },
   mounted () {
 
   },
   methods: {
     // 进入页面,加载图片
-    loadImages (collect) {
+    loadImages (page) {
+      this.page = page
       getImage({
-        collect,
-        page: this.page,
+        collect: this.collect,
+        page,
         per_page: this.pageSize
       }).then(res => {
-        const { results, total_count: totalCount } = res.data.data
+        const results = res.data.data.results
         this.images = results
-        this.totalCount = totalCount
+        this.totalCount = res.data.data.total_count
+        results.forEach(img => {
+          img.loading = false
+        })
       })
     },
     // 当全部收藏切换时触发该函数
-    onCollectChange (value) {
-      // debugger
-      this.loadImages(value)
-    },
+    // onCollectChange () {
+    //   // debugger
+    //   this.loadImages(1)
+    // },
     onUploadSuccess () {
+      // 关闭弹层
       this.dialogUploadVisible = false
-      this.loadImages(false)
+      // 更新列表
+      this.loadImages(this.page)
+      this.$message({
+        type: 'success',
+        message: '上传成功'
+      })
     },
     // 切换分页时触发
     onCurrentChange (page) {
-      this.page = page
-      this.loadImages(false)
+      // 展示loading效果
+      this.loadImages(page)
     },
     // 添加收藏
-    addImages (imageId) {
+    addImages (img) {
       // console.log(imageId)
-      this.$confirm('确认收藏吗？', '收藏提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // 如果已收藏,则取消收藏
-        if (this.collect === true) {
-          return
-        }
-        addImage({
-          collect: true // 这里要传递收藏还是取消收藏, TRUE 添加收藏,false 取消收藏
-        }, imageId).then(res => {
-          this.collect = true
-          this.loadImages(true)
-          this.$message({
-            type: 'success',
-            message: '收藏成功'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消收藏'
-        })
+      img.loading = true
+      // 如果已收藏,则取消收藏
+      addImage(img.id, !img.is_collected).then(res => {
+        img.is_collected = !img.is_collected
+        // 关闭loading
+        img.loading = false
       })
     },
     // 删除图片
-    delImages (imageId) {
+    delImages (img) {
       this.$confirm('确认删除吗？', '删除提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        delImage(imageId).then(res => {
-          this.loadImages(false)
-          // this.collect = false
+        img.loading = true
+        delImage(img.id).then(res => {
+          this.loadImages(this.page)
+          img.loading = false
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -194,21 +201,14 @@ export default {
 }
 .image-shadow {
   position: absolute;
-  top: 70px;
+  top: 60px;
   width: 100%;
-  height: 30px;
+  height: 40px;
+  color: #fff;
   background-color: rgba(0,0,0,0.8);
-}
-.el-icon-star-off {
-  position: absolute;
-  top: 20%;
-  left: 40%;
-  color: #fff;
-}
-.el-icon-delete {
-  position: absolute;
-  top: 20%;
-  right: 40%;
-  color: #fff;
+  font-size: 20px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 </style>
